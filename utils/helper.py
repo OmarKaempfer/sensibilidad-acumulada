@@ -1,3 +1,4 @@
+import pandas as pd
 from cucco import Cucco
 
 
@@ -30,3 +31,43 @@ def reorder_columns(df):
     last_cols = [col for col in df.columns if col not in first_cols]
     df = df[first_cols + last_cols]
     return df
+
+
+def get_antibiogram_signature(row, df):
+    start_antibiogram_index = df.columns.get_loc('numeroaislamiento') + 1
+    antibiogram_signature = ""
+    for i in range(start_antibiogram_index, len(df.columns), 2):
+        if pd.isnull(row[i]):
+            antibiogram_signature += '0'
+        if row[i] == 'Resistente':
+            antibiogram_signature += '1'
+        if row[i] == 'Sensible':
+            antibiogram_signature += '2'
+        if row[i] == 'Intermedio':
+            antibiogram_signature += '3'
+
+    return antibiogram_signature
+
+
+def get_resistance_value(row, df):
+    start_antibiogram_index = df.columns.get_loc('numeroaislamiento') + 1
+    microorganism_resistance = 0
+    antibiotics_tested = 0
+    for i in range(start_antibiogram_index, len(df.columns), 2):
+        if pd.isnull(row[i]):
+            continue
+        if row[i] == 'Resistente':
+            microorganism_resistance += 2
+        if row[i] == 'Intermedio':
+            microorganism_resistance += 1
+        antibiotics_tested += 1
+
+    microorganism_resistance = microorganism_resistance / antibiotics_tested
+    return microorganism_resistance
+
+
+def update_indices(dictionary, removed):
+    for key in dictionary:
+        for internal_key in dictionary[key]:
+            if dictionary[key][internal_key][1] > removed:
+                dictionary[key][internal_key] = (dictionary[key][internal_key][0], dictionary[key][internal_key][1] - 1)

@@ -14,7 +14,7 @@ def sensibilidad_acumulada(csv_path):
     df = helper.normalize_resistance_values(df)
     df = ingreso_episode_ordering(df, episodio_duration, ingreso_duration)
     df = helper.reorder_columns(df)
-    df = criteria.second_criteria(df)
+    df = criteria.third_criteria(df)
     df.to_csv('result/result.csv', encoding='utf-8-sig', sep=';')
 
 
