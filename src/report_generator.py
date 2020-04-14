@@ -1,8 +1,6 @@
 import pandas as pd
-import utils.helper as helper
-import filters.criteria as criteria
-from cucco import Cucco
-import tqdm
+import utils as helper
+import filters as criteria
 
 
 def sensibilidad_acumulada(csv_path):
@@ -58,4 +56,4 @@ def set_ingreso_episodio_index(df, episodio_duration, ingreso_duration):
 
 
 if __name__ == '__main__':
-    sensibilidad_acumulada("test-res/resistencia2.csv")
+    sensibilidad_acumulada("../test_res/resistencia2.csv")

@@ -1,6 +1,5 @@
-import pandas as pd
-from tqdm import tqdm
-import utils.helper as helper
+import utils as helper
+
 
 def first_criteria(df):
     ingreso_microorganisms = dict()
@@ -51,7 +50,8 @@ def third_criteria(df):
 
         microorganisms_to_strongest_resistance = nringreso_strongest_microorganism_resistances[row['nringreso']]
         if row['microorganismo'] not in microorganisms_to_strongest_resistance:
-            microorganisms_to_strongest_resistance[row['microorganismo']] = (helper.get_resistance_value(row, df), index)
+            microorganisms_to_strongest_resistance[row['microorganismo']] = (
+                helper.get_resistance_value(row, df), index)
             continue
 
         current_strongest_resistance = microorganisms_to_strongest_resistance[row['microorganismo']]
