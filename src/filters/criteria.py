@@ -2,6 +2,11 @@ import utils as helper
 
 
 def first_criteria(df):
+    """
+    First patient microorganism, no sensibility or type criteria considered
+    :param df:
+    :return:
+    """
     ingreso_microorganisms = dict()
 
     for index, row in df.iterrows():
@@ -20,6 +25,11 @@ def first_criteria(df):
 
 
 def second_criteria(df):
+    """
+    First patient microorganism with a different antibiogram, no type criteria considered
+    :param df:
+    :return:
+    """
     ingresos_last_antibiograms = dict()
 
     for index, row in df.iterrows():
@@ -42,6 +52,11 @@ def second_criteria(df):
 
 
 def third_criteria(df):
+    """
+    The most resistant microorganism of each microorganism
+    :param df:
+    :return:
+    """
     nringreso_strongest_microorganism_resistances = dict()
 
     for index, row in df.iterrows():

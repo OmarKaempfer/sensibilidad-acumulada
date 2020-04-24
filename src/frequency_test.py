@@ -14,7 +14,9 @@ class TestFrequency(unittest.TestCase):
         df = helper.normalize_df_headers(df)
         df = helper.normalize_resistance_values(df)
         result = frequency.matches_criteria(df, ['cip', 'caz'])
+        helper.to_csv(result)
         print(result)
+
         self.assertEqual(0, expected)
 
 

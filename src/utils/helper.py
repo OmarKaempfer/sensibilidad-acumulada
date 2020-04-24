@@ -17,17 +17,17 @@ def normalize_df_headers(df):
 
 
 def normalize_resistance_values(df):
-    df = df.replace(to_replace="0.0", value="resistente")\
-                         .replace(to_replace="-0", value="sensible")\
-                         .replace(to_replace="+0", value="resistente")\
-                         .replace(to_replace="0", value="resistente")\
-                         .replace(to_replace="+", value="resistente")\
-                         .replace(to_replace="-", value="sensible")
+    df = df.replace(to_replace="0.0", value="resistente") \
+        .replace(to_replace="-0", value="sensible") \
+        .replace(to_replace="+0", value="resistente") \
+        .replace(to_replace="0", value="resistente") \
+        .replace(to_replace="+", value="resistente") \
+        .replace(to_replace="-", value="sensible")
     return df
 
 
 def reorder_columns(df):
-    first_cols = ['nringreso', 'nrepisodio', 'peticion', 'fechapeticion', 'nhc', 'microorganismo','paciente']
+    first_cols = ['nringreso', 'nrepisodio', 'peticion', 'fechapeticion', 'nhc', 'microorganismo', 'paciente']
     last_cols = [col for col in df.columns if col not in first_cols]
     df = df[first_cols + last_cols]
     return df
@@ -71,3 +71,11 @@ def update_indices(dictionary, removed):
         for internal_key in dictionary[key]:
             if dictionary[key][internal_key][1] > removed:
                 dictionary[key][internal_key] = (dictionary[key][internal_key][0], dictionary[key][internal_key][1] - 1)
+
+
+def to_csv(dictionary):
+    df = pd.DataFrame(columns=["Microorganismo", "Resistentes", "Frecuencia"])
+    for key in dictionary:
+        microorganismo_record = dictionary[key]
+        df = df.append({'Microorganismo': key, 'Resistentes': microorganismo_record.resistant_to, 'Frecuencia': microorganismo_record.frequency}, ignore_index=True)
+    df.to_csv('../result/frequency.csv', encoding='utf-8-sig', sep=';', index=False)
