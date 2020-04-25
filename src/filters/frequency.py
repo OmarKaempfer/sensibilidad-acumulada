@@ -41,7 +41,7 @@ def get_key_matches(list_variable, name):
     if list_variable is None:
         return result_list
     for item in list_variable:
-        if name in item:
+        if item in name:
             result_list.append(item)
 
     return result_list

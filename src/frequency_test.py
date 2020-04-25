@@ -38,16 +38,25 @@ class TestFrequency(unittest.TestCase):
         self.assertEqual(result['acinetobacter baumannii complex'].frequency, expected)
 
     @parameterized.expand([
-        ["some_matches", '../test_res/dtr_fenotype/resistencia.csv', 2]
+        ["some_matches", '../test_res/ecr_fenotype/resistencia.csv', {'enterobacter test1': 1,
+                                                                      'enterobacter test2': 1,
+                                                                      'klebsiella pneumoniae': 1,
+                                                                      'klebsiella faecallis': 1,
+                                                                      'acinetobacter baumannii': 1,
+                                                                      'acinetobacter nosocomialis': 1,
+                                                                      'acinetobacter pittii': 1,
+                                                                      'acinetobacter dijkshoorniae': 1,
+                                                                      'acinetobacter seifertii': 1,
+                                                                      'escherichia coli': 1,
+                                                                      'pseudomonas aeruginosa': 1}]
     ])
-    def test_cr(self, name, resistencia_csv, expected):
+    def test_ecr(self, name, resistencia_csv, expected):
         df = initialize_df(resistencia_csv)
-        result = fenotypes.dtr(df)
+        result = fenotypes.ecr(df)
         helper.to_csv(result)
         print(result)
-
-        self.assertEqual(result['pseudomonas aeruginosa'].frequency, expected)
-        self.assertEqual(result['acinetobacter baumannii complex'].frequency, expected)
+        for key in expected:
+            self.assertEqual(result[key].frequency, expected[key], key)
 
 
 if __name__ == '__main__':
