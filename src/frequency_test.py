@@ -27,6 +27,7 @@ class TestFrequency(unittest.TestCase):
     @parameterized.expand([
         ["some_matches", '../test_res/dtr_fenotype/resistencia.csv', 2]
     ])
+    @unittest.skip
     def test_dtr(self, name, resistencia_csv, expected):
         df = initialize_df(resistencia_csv)
         result = fenotypes.dtr(df)
@@ -34,6 +35,19 @@ class TestFrequency(unittest.TestCase):
         print(result)
 
         self.assertEqual(result['pseudomonas aeruginosa'].frequency, expected)
+        self.assertEqual(result['acinetobacter baumannii complex'].frequency, expected)
+
+    @parameterized.expand([
+        ["some_matches", '../test_res/dtr_fenotype/resistencia.csv', 2]
+    ])
+    def test_cr(self, name, resistencia_csv, expected):
+        df = initialize_df(resistencia_csv)
+        result = fenotypes.dtr(df)
+        helper.to_csv(result)
+        print(result)
+
+        self.assertEqual(result['pseudomonas aeruginosa'].frequency, expected)
+        self.assertEqual(result['acinetobacter baumannii complex'].frequency, expected)
 
 
 if __name__ == '__main__':
