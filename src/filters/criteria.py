@@ -117,8 +117,10 @@ def fourth_criteria(df):
                     increment_frequency(saved_record, microorganism.last_fenotype[0])
             else:
                 increment_frequency(saved_record, microorganism.last_fenotype[0])
+                saved_record.frequency += 1
                 saved_record.last_nhc = microorganism.last_nhc
             saved_record.last_register = microorganism.last_register
         else:
+            microorganism.frequency = 1
             microorganisms[get(row, 'microorganismo')] = microorganism
     return microorganisms

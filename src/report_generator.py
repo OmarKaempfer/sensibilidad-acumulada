@@ -1,6 +1,6 @@
 import pandas as pd
-import utils as helper
-import filters as criteria
+from utils import helper
+from filters import criteria
 
 
 def sensibilidad_acumulada(csv_path):

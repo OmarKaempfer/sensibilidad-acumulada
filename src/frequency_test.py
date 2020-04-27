@@ -5,6 +5,7 @@ from utils import helper
 import pandas as pd
 from filters import fenotypes
 
+
 def initialize_df(resistencia_csv):
     df = pd.read_csv(resistencia_csv, delimiter=';')
     df = helper.normalize_df_headers(df)
