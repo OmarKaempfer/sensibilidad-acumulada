@@ -79,3 +79,51 @@ def to_csv(dictionary):
         microorganismo_record = dictionary[key]
         df = df.append({'Microorganismo': key, 'Resistentes': microorganismo_record.resistant_to, 'Frecuencia': microorganismo_record.frequency}, ignore_index=True)
     df.to_csv('../result/frequency.csv', encoding='utf-8-sig', sep=';', index=False)
+
+
+def is_resistant_to_all(row, antibiotics):
+    for antibiotic in antibiotics:
+        resistance = get(row, antibiotic)
+        if resistance != 'resistente':
+            return False
+
+    return True
+
+
+def get(row, field_name):
+    if field_name in row:
+        return str(row[field_name]).lower()
+    return None
+
+
+def get_key_matches(list_variable, name):
+    result_list = []
+    if list_variable is None:
+        return result_list
+    for item in list_variable:
+        if item in name:
+            result_list.append(item)
+
+    return result_list
+
+
+def decrement_frequency(microorganism, fenotype):
+    if fenotype == 'dtr':
+        microorganism.dtr_frequency -= 1
+    if fenotype == 'cr':
+        microorganism.cr_frequency -= 1
+    if fenotype == 'ecr':
+        microorganism.ecr_frequency -= 1
+    if fenotype == 'fqr':
+        microorganism.fqr_frequency -= 1
+
+
+def increment_frequency(microorganism, fenotype):
+    if fenotype == 'dtr':
+        microorganism.dtr_frequency += 1
+    if fenotype == 'cr':
+        microorganism.cr_frequency += 1
+    if fenotype == 'ecr':
+        microorganism.ecr_frequency += 1
+    if fenotype == 'fqr':
+        microorganism.fqr_frequency += 1

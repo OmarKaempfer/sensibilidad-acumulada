@@ -1,4 +1,7 @@
 import utils as helper
+from model.microorganismo import Microorganismo
+from utils.helper import *
+from filters.fenotypes import *
 
 
 def first_criteria(df):
@@ -78,3 +81,44 @@ def third_criteria(df):
         else:
             df.drop(index, inplace=True)
     return df
+
+
+def fourth_criteria(df):
+    """
+    DTR > CR > ECR > FQR
+    :param df:
+    :return:
+    """
+    microorganisms = dict()
+    for index, row in df.iterrows():
+        microorganism = Microorganismo()
+        microorganism.last_register = get(row, 'fechapeticion')
+        microorganism.last_nhc = get(row, 'nhc')
+
+        if is_fqr(row):
+            microorganism.last_fenotype = ('fqr', 0)
+            microorganism.fqr_frequency += 1
+        if is_ecr(row):
+            microorganism.last_fenotype = ('ecr', 1)
+            microorganism.ecr_frequency += 1
+        if is_cr(row):
+            microorganism.last_fenotype = ('cr', 2)
+            microorganism.cr_frequency += 1
+        if is_dtr(row):
+            microorganism.last_fenotype = ('dtr', 3)
+            microorganism.dtr_frequency += 1
+
+        if get(row, 'microorganismo') in microorganisms:
+
+            saved_record = microorganisms.get(get(row, 'microorganismo'))
+            if (microorganism.last_register - saved_record.last_register).days < 30 and saved_record.last_nhc == microorganism.last_nhc:
+                if microorganism.last_fenotype[1] >= saved_record.last_fenotype[1]:
+                    decrement_frequency(saved_record, saved_record.last_fenotype[0])
+                    increment_frequency(saved_record, microorganism.last_fenotype[0])
+            else:
+                increment_frequency(saved_record, microorganism.last_fenotype[0])
+                saved_record.last_nhc = microorganism.last_nhc
+            saved_record.last_register = microorganism.last_register
+        else:
+            microorganisms[get(row, 'microorganismo')] = microorganism
+    return microorganisms
