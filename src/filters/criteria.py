@@ -2,6 +2,7 @@ import utils as helper
 from model.microorganismo import Microorganismo
 from utils.helper import *
 from filters.fenotypes import *
+from datetime import datetime
 
 
 def first_criteria(df):
@@ -95,30 +96,35 @@ def fourth_criteria(df):
         microorganism.last_register = get(row, 'fechapeticion')
         microorganism.last_nhc = get(row, 'nhc')
 
-        if is_fqr(row):
-            microorganism.last_fenotype = ('fqr', 0)
-            microorganism.fqr_frequency += 1
-        if is_ecr(row):
-            microorganism.last_fenotype = ('ecr', 1)
-            microorganism.ecr_frequency += 1
-        if is_cr(row):
-            microorganism.last_fenotype = ('cr', 2)
-            microorganism.cr_frequency += 1
         if is_dtr(row):
             microorganism.last_fenotype = ('dtr', 3)
             microorganism.dtr_frequency += 1
+        elif is_cr(row):
+            microorganism.last_fenotype = ('cr', 2)
+            microorganism.cr_frequency += 1
+        elif is_ecr(row):
+            microorganism.last_fenotype = ('ecr', 1)
+            microorganism.ecr_frequency += 1
+        elif is_fqr(row):
+            microorganism.last_fenotype = ('fqr', 0)
+            microorganism.fqr_frequency += 1
+        else:
+            microorganism.last_fenotype = ('none', -1)
 
         if get(row, 'microorganismo') in microorganisms:
-
             saved_record = microorganisms.get(get(row, 'microorganismo'))
-            if (microorganism.last_register - saved_record.last_register).days < 30 and saved_record.last_nhc == microorganism.last_nhc:
+            current_date = pd.to_datetime(microorganism.last_register, dayfirst=True)
+            last_date = pd.to_datetime(saved_record.last_register, dayfirst=True)
+            if (current_date - last_date).days < 30 and saved_record.last_nhc == microorganism.last_nhc:
                 if microorganism.last_fenotype[1] >= saved_record.last_fenotype[1]:
                     decrement_frequency(saved_record, saved_record.last_fenotype[0])
                     increment_frequency(saved_record, microorganism.last_fenotype[0])
+                    saved_record.last_fenotype = microorganism.last_fenotype
             else:
                 increment_frequency(saved_record, microorganism.last_fenotype[0])
                 saved_record.frequency += 1
                 saved_record.last_nhc = microorganism.last_nhc
+                saved_record.last_fenotype = microorganism.last_fenotype
             saved_record.last_register = microorganism.last_register
         else:
             microorganism.frequency = 1

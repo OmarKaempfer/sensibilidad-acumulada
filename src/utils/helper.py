@@ -81,6 +81,18 @@ def to_csv(dictionary):
     df.to_csv('../result/frequency.csv', encoding='utf-8-sig', sep=';', index=False)
 
 
+def to_csv_fourth_criteria(dictionary):
+    df = pd.DataFrame(columns=["Microorganismo", "Frecuencia", "Frecuencia DTR",  "Frecuencia CR", "Frecuencia ECR", "Frecuencia FQR"])
+    for key in dictionary:
+        microorganismo_record = dictionary[key]
+        df = df.append({'Microorganismo': key, 'Frecuencia': microorganismo_record.frequency,
+                        'Frecuencia DTR': microorganismo_record.dtr_frequency,
+                        'Frecuencia CR': microorganismo_record.cr_frequency,
+                        'Frecuencia ECR': microorganismo_record.ecr_frequency,
+                        'Frecuencia FQR': microorganismo_record.fqr_frequency}, ignore_index=True)
+    df.to_csv('../result/frequency.csv', encoding='utf-8-sig', sep=';', index=False)
+
+
 def is_resistant_to_all(row, antibiotics):
     for antibiotic in antibiotics:
         resistance = get(row, antibiotic)

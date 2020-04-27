@@ -1,15 +1,20 @@
 import unittest
 from parameterized import parameterized
 from filters import frequency
-from utils import helper
-import pandas as pd
+from report_generator import ingreso_episode_ordering
 from filters import fenotypes
+from filters.criteria import *
+
+episodio_duration = 6
+ingreso_duration = 14
 
 
 def initialize_df(resistencia_csv):
     df = pd.read_csv(resistencia_csv, delimiter=';')
-    df = helper.normalize_df_headers(df)
-    return helper.normalize_resistance_values(df)
+    df = normalize_df_headers(df)
+    df = normalize_resistance_values(df)
+    df = ingreso_episode_ordering(df, episodio_duration, ingreso_duration)
+    return normalize_resistance_values(df)
 
 
 class TestFrequency(unittest.TestCase):
@@ -20,7 +25,7 @@ class TestFrequency(unittest.TestCase):
     def test_multiple_antibiotics(self, name, resistencia_csv, expected):
         df = initialize_df(resistencia_csv)
         result = frequency.matches_criteria(df, ['cip', 'caz'])
-        helper.to_csv(result)
+        to_csv(result)
         print(result)
 
         self.assertEqual(0, expected)
@@ -32,7 +37,7 @@ class TestFrequency(unittest.TestCase):
     def test_dtr(self, name, resistencia_csv, expected):
         df = initialize_df(resistencia_csv)
         result = fenotypes.dtr(df)
-        helper.to_csv(result)
+        to_csv(result)
         print(result)
 
         self.assertEqual(result['pseudomonas aeruginosa'].frequency, expected)
@@ -51,13 +56,46 @@ class TestFrequency(unittest.TestCase):
                                                                       'escherichia coli': 1,
                                                                       'pseudomonas aeruginosa': 1}]
     ])
+    @unittest.skip
     def test_ecr(self, name, resistencia_csv, expected):
         df = initialize_df(resistencia_csv)
         result = fenotypes.ecr(df)
-        helper.to_csv(result)
+        to_csv(result)
         print(result)
         for key in expected:
             self.assertEqual(result[key].frequency, expected[key], key)
+
+    '''
+    Expected
+    dtr 2
+    fqr 2
+    cr 1
+    ecr 1
+    freq 8
+
+
+    pseudomonas
+    freq 3
+    dtr 1
+    fqr 
+    cr
+    ecr 1
+
+    acinetobacter nosocomialis
+    freq 2
+    dtr 1
+    cr 1
+    ecr
+    fqr
+    '''
+    @parameterized.expand([
+        ["some_matches", '../test_res/fourth_criteria/resistencia.csv']
+    ])
+    def test_fourth_criteria(self, name, resistencia_csv):
+        df = initialize_df(resistencia_csv)
+        result = fourth_criteria(df)
+        to_csv_fourth_criteria(result)
+        print(result)
 
 
 if __name__ == '__main__':

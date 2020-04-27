@@ -8,7 +8,7 @@ dtr_antibiotics = ['ptz', 'atm', 'ctx', 'cro', 'caz', 'fep', 'imp', 'mem', 'ert'
 acinetobacter_baumannii_complex = ['acinetobacter baumannii', 'acinetobacter nosocomialis', 'acinetobacter pittii', 'acinetobacter dijkshoorniae', 'acinetobacter seifertii']
 acinetobacter_baumannii_complex_dtr_antibiotics = ['ptz', 'atm', 'ctx', 'cro', 'caz', 'fep', 'imp', 'mem', 'ert', 'cip', 'lvx', 'mox', 'sam']
 
-enterobacter_cr_antibiotics = ['ert', 'imi', 'mem']
+enterobacter_cr_antibiotics = ['ert', 'imp', 'mem']
 pseudomonas_aeruginosa_cr_antibiotics = ['imp', 'mem']
 
 enterobacter_ecr_antibiotics = ['ctx', 'cro', 'caz', 'fep']

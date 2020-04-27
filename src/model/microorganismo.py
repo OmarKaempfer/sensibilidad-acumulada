@@ -5,7 +5,7 @@ from typing import List
 
 @dataclass
 class Microorganismo:
-    resistant_to: List[str]
+    resistant_to: List[str] = None
     last_register: datetime.datetime = None
     frequency: int = 0
 

@@ -1,12 +1,6 @@
-﻿Microorganismo;Resistentes;Frecuencia
-enterobacter test1;['ctx', 'cro', 'caz', 'fep'];1
-enterobacter test2;['ctx', 'cro', 'caz', 'fep'];1
-klebsiella pneumoniae;['ctx', 'cro', 'caz', 'fep'];1
-klebsiella faecallis;['ctx', 'cro', 'caz', 'fep'];1
-escherichia coli;['ctx', 'cro', 'caz', 'fep'];1
-acinetobacter baumannii;['ctx', 'cro', 'caz', 'fep'];1
-acinetobacter nosocomialis;['ctx', 'cro', 'caz', 'fep'];1
-acinetobacter pittii;['ctx', 'cro', 'caz', 'fep'];1
-acinetobacter dijkshoorniae;['ctx', 'cro', 'caz', 'fep'];1
-acinetobacter seifertii;['ctx', 'cro', 'caz', 'fep'];1
-pseudomonas aeruginosa;['caz', 'fep'];1
+﻿Microorganismo;Frecuencia;Frecuencia DTR;Frecuencia CR;Frecuencia ECR;Frecuencia FQR
+enterobacter dtr1;1;1;0;0;0
+enterobacter dtr2;1;1;0;0;0
+enterobacter overridin;8;2;1;1;2
+pseudomonas aeruginosa;3;1;0;1;0
+acinetobacter nosocomialis;2;1;1;0;0
