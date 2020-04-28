@@ -93,6 +93,26 @@ def to_csv_fourth_criteria(dictionary):
     df.to_csv('../result/frequency.csv', encoding='utf-8-sig', sep=';', index=False)
 
 
+def to_csv_sensitivity_records(df, microorganisms):
+    sensitivity_df = pd.DataFrame()
+    sensitivity_df = sensitivity_df.append(list(map(to_row, microorganisms.values())), ignore_index=True)
+    sensitivity_df.to_csv('../result/frequency.csv', encoding='utf-8-sig', sep=';', index=False)
+    return sensitivity_df
+
+
+def to_row(microorganism):
+    row = dict()
+    row['Total'] = microorganism.frequency
+    row['Microorganismo'] = microorganism.name
+    for antibiotic in microorganism.sensibility:
+        row[antibiotic] = to_tuple(microorganism.sensibility[antibiotic])
+
+    return row
+
+
+def to_tuple(sensibility_record): return sensibility_record.sensible, sensibility_record.total, sensibility_record.percentage
+
+
 def is_resistant_to_all(row, antibiotics):
     for antibiotic in antibiotics:
         resistance = get(row, antibiotic)
@@ -139,3 +159,11 @@ def increment_frequency(microorganism, fenotype):
         microorganism.ecr_frequency += 1
     if fenotype == 'fqr':
         microorganism.fqr_frequency += 1
+
+
+def get_all_antibiotics(df):
+    start_antibiogram_index = df.columns.get_loc('numeroaislamiento') + 1
+    antibiotics = []
+    for i in range(start_antibiogram_index, len(df.columns), 2):
+        antibiotics = antibiotics + [df.columns[i]]
+    return antibiotics

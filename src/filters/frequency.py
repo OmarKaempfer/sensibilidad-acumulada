@@ -43,9 +43,9 @@ def get_sensibility_percentages(df):
                 microorganism_record.sensibility[antibiotic].total += 1
             if antibiotic_resistance == 'sensible' or antibiotic_resistance == 'intermedio':
                 microorganism_record.sensibility[antibiotic].sensible += 1
+            microorganism_record.sensibility[antibiotic].percentage = \
+                microorganism_record.sensibility[antibiotic].sensible / microorganism_record.sensibility[antibiotic].total
         microorganism_record.frequency += 1
-        microorganism_record.sensibility[antibiotic].percentage = \
-            microorganism_record.sensibility[antibiotic].sensible / microorganism_record.sensibility[antibiotic].total
 
     return microorganisms
 
@@ -57,14 +57,6 @@ def initialize_microorganism_record(row, antibiotics):
         microorganism_sensibility[antibiotic] = SensibilityRecord()
     microorganism_record.sensibility = microorganism_sensibility
     return microorganism_record
-
-
-def get_all_antibiotics(df):
-    start_antibiogram_index = df.columns.get_loc('numeroaislamiento') + 1
-    antibiotics = []
-    for i in range(start_antibiogram_index, len(df.columns), 2):
-        antibiotics = antibiotics + [df.columns[i]]
-    return antibiotics
 
 
 @dataclass

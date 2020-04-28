@@ -104,7 +104,7 @@ class TestFrequency(unittest.TestCase):
     def test_sensibility_percentages(self, name, resistencia_csv):
         df = initialize_df(resistencia_csv)
         df = reorder_columns(df)
-        print(frequency.get_sensibility_percentages(df))
+        to_csv_sensitivity_records(df, frequency.get_sensibility_percentages(df))
 
 
 if __name__ == '__main__':
