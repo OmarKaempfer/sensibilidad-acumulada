@@ -91,11 +91,20 @@ class TestFrequency(unittest.TestCase):
     @parameterized.expand([
         ["some_matches", '../test_res/fourth_criteria/resistencia.csv']
     ])
+    @unittest.skip
     def test_fourth_criteria(self, name, resistencia_csv):
         df = initialize_df(resistencia_csv)
         result = fourth_criteria(df)
         to_csv_fourth_criteria(result)
         print(result)
+
+    @parameterized.expand([
+        ["some_matches", '../test_res/fourth_criteria/resistencia.csv']
+    ])
+    def test_sensibility_percentages(self, name, resistencia_csv):
+        df = initialize_df(resistencia_csv)
+        df = reorder_columns(df)
+        print(frequency.get_sensibility_percentages(df))
 
 
 if __name__ == '__main__':

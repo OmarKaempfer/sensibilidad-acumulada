@@ -1,6 +1,6 @@
 import utils as helper
 from model.microorganismo import Microorganismo
-from utils.helper import *
+from utils.helper import get_antibiogram_signature
 from filters.fenotypes import *
 from datetime import datetime
 
@@ -46,7 +46,7 @@ def second_criteria(df):
             continue
 
         last_antibiogram = microorganisms_to_antibiograms[row['microorganismo']]
-        current_antibiogram = helper.get_antibiogram_signature(row, df)
+        current_antibiogram = get_antibiogram_signature(row, df)
         if last_antibiogram != current_antibiogram:
             microorganisms_to_antibiograms[row['microorganismo']] = current_antibiogram
             continue
