@@ -1,9 +1,10 @@
 import pandas as pd
 from utils import helper
 from filters import criteria
+from model.report_configuration import ReportConfiguration
 
 
-def sensibilidad_acumulada(csv_path):
+def sensibilidad_acumulada(csv_path, report_configuration):
     episodio_duration = 6
     ingreso_duration = 14
 
@@ -12,8 +13,10 @@ def sensibilidad_acumulada(csv_path):
     df = helper.normalize_resistance_values(df)
     df = ingreso_episode_ordering(df, episodio_duration, ingreso_duration)
     df = helper.reorder_columns(df)
-    df = criteria.third_criteria(df)
-    df.to_csv('result/result.csv', encoding='utf-8-sig', sep=';')
+    for filter_function in report_configuration.filters:
+        current_filter = report_configuration.filters[filter_function]
+        df = current_filter(df)
+    df.to_csv('C:/Users/omark/PycharmProjects/sensibilidad-acumulada/result/result.csv', encoding='utf-8-sig', sep=';')
 
 
 def ingreso_episode_ordering(df, episodio_duration, ingreso_duration):

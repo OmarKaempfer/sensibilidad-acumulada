@@ -1,8 +1,6 @@
 import utils as helper
-from model.microorganismo import Microorganismo
-from utils.helper import get_antibiogram_signature
 from filters.fenotypes import *
-from datetime import datetime
+from model.microorganismo import Microorganismo
 
 
 def first_criteria(df):

@@ -1,8 +1,4 @@
 from dataclasses import dataclass
-from datetime import datetime
-from typing import List
-
-from model.microorganismo import Microorganismo
 from utils.helper import *
 
 
@@ -39,12 +35,13 @@ def get_sensibility_percentages(df):
 
         for antibiotic in antibiotics:
             antibiotic_resistance = get(row, antibiotic)
-            if (antibiotic_resistance is not None) or (antibiotic_resistance != ''):
+            if antibiotic_resistance != 'nan':
                 microorganism_record.sensibility[antibiotic].total += 1
             if antibiotic_resistance == 'sensible' or antibiotic_resistance == 'intermedio':
                 microorganism_record.sensibility[antibiotic].sensible += 1
-            microorganism_record.sensibility[antibiotic].percentage = \
-                microorganism_record.sensibility[antibiotic].sensible / microorganism_record.sensibility[antibiotic].total
+            if microorganism_record.sensibility[antibiotic].total != 0:
+                microorganism_record.sensibility[antibiotic].percentage = \
+                    microorganism_record.sensibility[antibiotic].sensible / microorganism_record.sensibility[antibiotic].total
         microorganism_record.frequency += 1
 
     return microorganisms

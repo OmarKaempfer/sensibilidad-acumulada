@@ -3,6 +3,7 @@ from parameterized import parameterized
 from filters import frequency
 from report_generator import ingreso_episode_ordering
 from filters import fenotypes
+from filters import filters
 from filters.criteria import *
 
 episodio_duration = 6
@@ -101,10 +102,50 @@ class TestFrequency(unittest.TestCase):
     @parameterized.expand([
         ["some_matches", '../test_res/fourth_criteria/resistencia.csv']
     ])
+    @unittest.skip
     def test_sensibility_percentages(self, name, resistencia_csv):
         df = initialize_df(resistencia_csv)
         df = reorder_columns(df)
         to_csv_sensitivity_records(df, frequency.get_sensibility_percentages(df))
+
+    @parameterized.expand([
+        ["some_matches", '../test_res/fourth_criteria/resistencia.csv']
+    ])
+    @unittest.skip
+    def test_age_filter(self, name, resistencia_csv):
+        df = initialize_df(resistencia_csv)
+        df = reorder_columns(df)
+        df = filters.age(df, filters.age_higher_than(30), filters.age_lower_than(50))
+        df.to_csv('../result/result.csv', encoding='utf-8-sig', sep=';', index=False)
+
+    @parameterized.expand([
+        ["some_matches", '../test_res/fourth_criteria/resistencia.csv']
+    ])
+    @unittest.skip
+    def test_type_filter(self, name, resistencia_csv):
+        df = initialize_df(resistencia_csv)
+        df = reorder_columns(df)
+        df = filters.culture_type(df, "exudado rectal", "muestra orina")
+        df.to_csv('../result/result.csv', encoding='utf-8-sig', sep=';', index=False)
+
+    @parameterized.expand([
+        ["some_matches", '../test_res/fourth_criteria/resistencia.csv']
+    ])
+    @unittest.skip
+    def test_type_filter(self, name, resistencia_csv):
+        df = initialize_df(resistencia_csv)
+        df = reorder_columns(df)
+        df = filters.service_area(df, 'medicina intensiva', 'anestesia')
+        df.to_csv('../result/result.csv', encoding='utf-8-sig', sep=';', index=False)
+
+    @parameterized.expand([
+        ["some_matches", '../test_res/fourth_criteria/resistencia.csv']
+    ])
+    def test_type_filter(self, name, resistencia_csv):
+        df = initialize_df(resistencia_csv)
+        df = reorder_columns(df)
+        df = filters.center(df, 'HOSPITAL UNIV. G.C. DR. NEGRIN', 'CS NORTE')
+        df.to_csv('../result/result.csv', encoding='utf-8-sig', sep=';', index=False)
 
 
 if __name__ == '__main__':

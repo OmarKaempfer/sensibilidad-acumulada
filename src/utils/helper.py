@@ -1,6 +1,6 @@
 import pandas as pd
 from cucco import Cucco
-
+from filters import filters
 
 def normalize_df_headers(df):
     norm_esp = Cucco()
@@ -167,3 +167,23 @@ def get_all_antibiotics(df):
     for i in range(start_antibiogram_index, len(df.columns), 2):
         antibiotics = antibiotics + [df.columns[i]]
     return antibiotics
+
+
+def get_age(row):
+    fecha_peticion = pd.to_datetime(get(row, 'fechapeticion'), dayfirst=True)
+    fecha_nacimiento = pd.to_datetime(get(row, 'fechanacimiento'), dayfirst=True)
+    return (fecha_peticion - fecha_nacimiento).days / 365.25
+
+
+def build_age_filter(age_value, operator):
+    if operator == '>':
+        return lambda df: filters.age(df, filters.age_higher_than(float(age_value)))
+    else:
+        return lambda df: filters.age(df, filters.age_lower_than(float(age_value)))
+
+
+def build_sex_filter(sex_value):
+    if sex_value == 'Hombre':
+        return lambda df: filters.gender(df, 'M')
+    else:
+        return lambda df: filters.gender(df, 'F')
