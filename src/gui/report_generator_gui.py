@@ -28,9 +28,15 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.report_generation_button.clicked.connect(lambda: sensibilidad_acumulada("C:/Users/omark/PycharmProjects/sensibilidad-acumulada/test_res/fourth_criteria/resistencia.csv", self.report_config))
         self.ui.delete_filter_button.clicked.connect(lambda: self.remove_filter(self.ui.listWidget.selectedItems()))
 
+    def generate_report(self):
+
+        sensibilidad_acumulada(
+            "C:/Users/omark/PycharmProjects/sensibilidad-acumulada/test_res/fourth_criteria/resistencia.csv",
+            self.report_config)
+
     def remove_filter(self, filters_list):
         for list_item in filters_list:
-            report_configuration.filters.pop(list_item.text())
+            report_configuration.filter_conditions.pop(list_item.text())
             self.ui.listWidget.takeItem(self.ui.listWidget.row(list_item))
 
     def open_age_filter_dialog(self):
@@ -51,8 +57,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 return
             filter_name = 'Edad ' + ui.age_dialog_combo.currentText() + ' ' + ui.age_dialog_age_value_input.text()
             self.report_config\
-                .add_filter(filter_name,
-                            build_age_filter(ui.age_dialog_age_value_input.text(), ui.age_dialog_combo.currentText()))
+                .add_filter_condition(filter_name,
+                                      get_age_filter_condition(ui.age_dialog_age_value_input.text(), ui.age_dialog_combo.currentText()))
             self.ui.listWidget.addItem(filter_name)
         self.setDisabled(False)
 
@@ -72,13 +78,13 @@ class MainWindow(QtWidgets.QMainWindow):
         SexFilterDialog.show()
         response = SexFilterDialog.exec_()
         if response == QtWidgets.QDialog.Accepted:
-            filter_name = 'Sexo ' + ui.sex_dialog_combo.currentText()
-            self.report_config.add_filter(filter_name, build_sex_filter(ui.sex_dialog_combo.currentText()))
+            filter_name = 'Sexo: ' + ui.sex_dialog_combo.currentText()
+            self.report_config.add_filter_condition(filter_name, get_sex_condition(ui.sex_dialog_combo.currentText()))
             self.ui.listWidget.addItem(filter_name)
         self.setDisabled(False)
         return
 
-    def open_sevice_filter_dialog(self):
+    def open_service_filter_dialog(self):
         ServiceFilterDialog = QtWidgets.QDialog()
         ui = Ui_ServiceFilterDialog()
         ui.setupUi(ServiceFilterDialog)
@@ -86,9 +92,13 @@ class MainWindow(QtWidgets.QMainWindow):
         ServiceFilterDialog.show()
         response = ServiceFilterDialog.exec_()
         if response == QtWidgets.QDialog.Accepted:
-            print('Accepted')
-        else:
-            print('Canceled')
+            if ui.service_dialog_service_input.text() == '':
+                self.open_alert_dialog(ServiceFilterDialog)
+                self.open_age_filter_dialog()
+                return
+            filter_name = 'Servicio: ' + ui.service_dialog_service_input.text()
+            self.report_config.add_filter_condition(filter_name, get_service_condition(ui.service_dialog_service_input.text()))
+            self.ui.listWidget.addItem(filter_name)
         self.setDisabled(False)
         return
 
@@ -100,9 +110,13 @@ class MainWindow(QtWidgets.QMainWindow):
         CenterFilterDialog.show()
         response = CenterFilterDialog.exec_()
         if response == QtWidgets.QDialog.Accepted:
-            print('Accepted')
-        else:
-            print('Canceled')
+            if ui.center_dialog_center_input.text() == '':
+                self.open_alert_dialog(CenterFilterDialog)
+                self.open_age_filter_dialog()
+                return
+            filter_name = 'Centro: ' + ui.center_dialog_center_input.text()
+            self.report_config.add_filter_condition(filter_name, get_center_condition(ui.center_dialog_center_input.text()))
+            self.ui.listWidget.addItem(filter_name)
         self.setDisabled(False)
         return
 
@@ -112,7 +126,7 @@ class MainWindow(QtWidgets.QMainWindow):
         if filter_type == 'Sexo':
             return self.open_sex_filter_dialog()
         if filter_type == 'Servicio':
-            return self.open_sevice_filter_dialog()
+            return self.open_service_filter_dialog()
         if filter_type == 'Centro':
             return self.open_center_filter_dialog()
 

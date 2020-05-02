@@ -7,15 +7,14 @@ from model.report_configuration import ReportConfiguration
 def sensibilidad_acumulada(csv_path, report_configuration):
     episodio_duration = 6
     ingreso_duration = 14
-
     df = pd.read_csv(csv_path, delimiter=';')
     df = helper.normalize_df_headers(df)
     df = helper.normalize_resistance_values(df)
     df = ingreso_episode_ordering(df, episodio_duration, ingreso_duration)
     df = helper.reorder_columns(df)
-    for filter_function in report_configuration.filters:
-        current_filter = report_configuration.filters[filter_function]
-        df = current_filter(df)
+    built_filters = report_configuration.build_filters()
+    for current_filter in built_filters:
+        df = built_filters[current_filter](df)
     df.to_csv('C:/Users/omark/PycharmProjects/sensibilidad-acumulada/result/result.csv', encoding='utf-8-sig', sep=';')
 
 

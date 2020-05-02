@@ -175,15 +175,23 @@ def get_age(row):
     return (fecha_peticion - fecha_nacimiento).days / 365.25
 
 
-def build_age_filter(age_value, operator):
+def get_age_filter_condition(age_value, operator):
     if operator == '>':
-        return lambda df: filters.age(df, filters.age_higher_than(float(age_value)))
+        return filters.age_higher_than(float(age_value))
     else:
-        return lambda df: filters.age(df, filters.age_lower_than(float(age_value)))
+        return filters.age_lower_than(float(age_value))
 
 
-def build_sex_filter(sex_value):
+def get_sex_condition(sex_value):
     if sex_value == 'Hombre':
-        return lambda df: filters.gender(df, 'M')
+        return 'M'
     else:
-        return lambda df: filters.gender(df, 'F')
+        return 'F'
+
+
+def get_service_condition(service):
+    return str.lower(service)
+
+
+def get_center_condition(center):
+    return str.lower(center)

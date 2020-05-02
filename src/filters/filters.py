@@ -38,6 +38,7 @@ def age(df, *age_conditions):
         for age_condition in age_conditions:
             if not age_condition(get_age(row)):
                 df.drop(index, inplace=True)
+
     return df
 
 
