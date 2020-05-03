@@ -1,13 +1,14 @@
 import pandas as pd
+
+from filters.criteria import *
 from utils import helper
-from filters import criteria
-from model.report_configuration import ReportConfiguration
+from filters import frequency
 
 
 def sensibilidad_acumulada(csv_path, report_configuration):
     episodio_duration = 6
     ingreso_duration = 14
-    df = pd.read_csv(csv_path, delimiter=';')
+    df = pd.read_csv(report_configuration.initial_csv_path, delimiter=';')
     df = helper.normalize_df_headers(df)
     df = helper.normalize_resistance_values(df)
     df = ingreso_episode_ordering(df, episodio_duration, ingreso_duration)
@@ -15,7 +16,12 @@ def sensibilidad_acumulada(csv_path, report_configuration):
     built_filters = report_configuration.build_filters()
     for current_filter in built_filters:
         df = built_filters[current_filter](df)
-    df.to_csv('C:/Users/omark/PycharmProjects/sensibilidad-acumulada/result/result.csv', encoding='utf-8-sig', sep=';')
+
+    df = report_configuration.criteria.get_criteria_function()(df)
+    if report_configuration.dtr_fenotype:
+        helper.to_csv_fourth_criteria(fourth_criteria(df), report_configuration.dtr_fenotype_path)
+    helper.to_csv_sensitivity_records(frequency.get_sensibility_percentages(df), report_configuration.sensitivity_table_path)
+    df.to_csv(report_configuration.final_csv_path, encoding='utf-8-sig', sep=';')
 
 
 def ingreso_episode_ordering(df, episodio_duration, ingreso_duration):

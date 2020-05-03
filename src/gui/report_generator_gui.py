@@ -1,17 +1,19 @@
+import sys
+
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
+from PyQt5.QtWidgets import QFileDialog
 
-from gui.gui_components.main_window import Ui_MainWindow  # importing our generated file
-from gui.gui_components.age_filter_dialog import Ui_AgeFilterDialog
-from gui.gui_components.sex_filter_dialog import Ui_SexFilterDialog
-from gui.gui_components.center_filter_dialog import Ui_CenterFilterDialog
-from gui.gui_components.service_filter_dialog import Ui_ServiceFilterDialog
-from gui.gui_components.alert_dialog import Ui_AlertDialog
-from model.report_configuration import ReportConfiguration
 from filters.filters import *
+from gui.gui_components.age_filter_dialog import Ui_AgeFilterDialog
+from gui.gui_components.alert_dialog import Ui_AlertDialog
+from gui.gui_components.center_filter_dialog import Ui_CenterFilterDialog
+from gui.gui_components.main_window import Ui_MainWindow  # importing our generated file
+from gui.gui_components.service_filter_dialog import Ui_ServiceFilterDialog
+from gui.gui_components.sex_filter_dialog import Ui_SexFilterDialog
+from model.report_configuration import ReportConfiguration
 from report_generator import sensibilidad_acumulada
-import sys
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -25,11 +27,44 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui.add_filter_combo.addItem('Servicio')
         self.ui.add_filter_combo.addItem('Centro')
         self.ui.add_filter_button.clicked.connect(lambda: self.open_filter_dialog(self.ui.add_filter_combo.currentText()))
-        self.ui.report_generation_button.clicked.connect(lambda: sensibilidad_acumulada("C:/Users/omark/PycharmProjects/sensibilidad-acumulada/test_res/fourth_criteria/resistencia.csv", self.report_config))
+        self.ui.report_generation_button.clicked.connect(self.generate_report)
         self.ui.delete_filter_button.clicked.connect(lambda: self.remove_filter(self.ui.listWidget.selectedItems()))
+        self.ui.criteria_combobox.activated.connect(self.update_criteria_description)
+        self.update_criteria_description()
+        self.ui.csv_resistance_path_button.clicked.connect(self.initial_csv_resistance_path_command)
+        self.ui.sensibility_table_path_button.clicked.connect(self.sensibility_table_path_command)
+        self.ui.dtr_fenotype_button.clicked.connect(self.dtr_fenotype_path_command)
+        self.ui.final_csv_path_button.clicked.connect(self.csv_destination_path_command)
+
+    def initial_csv_resistance_path_command(self):
+        # file_dialog = QFileDialog()
+        self.ui.initial_csv_path_input.setText(QFileDialog().getOpenFileName()[0])
+
+    def sensibility_table_path_command(self):
+        self.ui.sensibility_table_path_input.setText(self.get_destination_path())
+
+    def dtr_fenotype_path_command(self):
+        self.ui.dtr_fenotype_path_input.setText(self.get_destination_path())
+
+    def csv_destination_path_command(self):
+        self.ui.final_csv_path_input.setText(self.get_destination_path())
+
+    def get_destination_path(self):
+        file_dlg = QFileDialog()
+        return file_dlg.getSaveFileName()[0]
+
+    def update_criteria_description(self):
+        self.ui.description_text.setText(get_criteria(self.ui.criteria_combobox.currentText()).get_description())
 
     def generate_report(self):
+        self.report_config.set_criteria(get_criteria(self.ui.criteria_combobox.currentText()))
+        self.report_config.initial_csv_path = self.ui.initial_csv_path_input.text()
+        self.report_config.sensitivity_table_path = self.ui.sensibility_table_path_input.text()
+        self.report_config.final_csv_path = self.ui.final_csv_path_input.text()
+        self.report_config.dtr_fenotype_path = self.ui.dtr_fenotype_path_input.text()
 
+        if self.ui.dtr_fenotype_checkbox.isChecked():
+            self.report_config.dtr_fenotype = True
         sensibilidad_acumulada(
             "C:/Users/omark/PycharmProjects/sensibilidad-acumulada/test_res/fourth_criteria/resistencia.csv",
             self.report_config)
@@ -61,6 +96,7 @@ class MainWindow(QtWidgets.QMainWindow):
                                       get_age_filter_condition(ui.age_dialog_age_value_input.text(), ui.age_dialog_combo.currentText()))
             self.ui.listWidget.addItem(filter_name)
         self.setDisabled(False)
+
 
     def open_alert_dialog(self, parent_window):
         AlertDialog = QtWidgets.QDialog()

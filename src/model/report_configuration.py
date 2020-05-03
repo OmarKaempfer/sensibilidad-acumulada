@@ -1,4 +1,3 @@
-from enum import Enum
 from filters import filters
 
 
@@ -7,6 +6,11 @@ class ReportConfiguration:
     criteria = None
     filters = {'Edad': [], 'Sexo': [], 'Servicio': [], 'Centro': []}
     built_filters = dict()
+    dtr_fenotype = False
+    initial_csv_path = None
+    sensitivity_table_path = None
+    final_csv_path = None
+    dtr_fenotype_path = None
 
     def add_filter_condition(self, filter_name, filter_function):
         self.filter_conditions[filter_name] = filter_function
@@ -41,13 +45,3 @@ class ReportConfiguration:
         self.built_filters['Sexo'] = lambda df: filters.gender(df, *self.filters['Sexo'])
 
         return self.built_filters
-
-
-class Criteria(Enum):
-    FIRST_CRITERIA = 1
-    SECOND_CRITERIA = 2
-    FOURTH_CRITERIA = 4
-
-    def get_description(self):
-        if self is self.FIRST_CRITERIA:
-            return "Primer microorganismo por paciente independientemente de su sensibilidad o tipo"

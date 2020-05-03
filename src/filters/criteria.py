@@ -1,6 +1,8 @@
-import utils as helper
+from utils import helper
 from filters.fenotypes import *
 from model.microorganismo import Microorganismo
+from enum import Enum
+import pandas as pd
 
 
 def first_criteria(df):
@@ -44,7 +46,7 @@ def second_criteria(df):
             continue
 
         last_antibiogram = microorganisms_to_antibiograms[row['microorganismo']]
-        current_antibiogram = get_antibiogram_signature(row, df)
+        current_antibiogram = helper.get_antibiogram_signature(row, df)
         if last_antibiogram != current_antibiogram:
             microorganisms_to_antibiograms[row['microorganismo']] = current_antibiogram
             continue
@@ -91,8 +93,8 @@ def fourth_criteria(df):
     microorganisms = dict()
     for index, row in df.iterrows():
         microorganism = Microorganismo()
-        microorganism.last_register = get(row, 'fechapeticion')
-        microorganism.last_nhc = get(row, 'nhc')
+        microorganism.last_register = helper.get(row, 'fechapeticion')
+        microorganism.last_nhc = helper.get(row, 'nhc')
 
         if is_dtr(row):
             microorganism.last_fenotype = ('dtr', 3)
@@ -109,22 +111,55 @@ def fourth_criteria(df):
         else:
             microorganism.last_fenotype = ('none', -1)
 
-        if get(row, 'microorganismo') in microorganisms:
-            saved_record = microorganisms.get(get(row, 'microorganismo'))
+        if helper.get(row, 'microorganismo') in microorganisms:
+            saved_record = microorganisms.get(helper.get(row, 'microorganismo'))
             current_date = pd.to_datetime(microorganism.last_register, dayfirst=True)
             last_date = pd.to_datetime(saved_record.last_register, dayfirst=True)
             if (current_date - last_date).days < 30 and saved_record.last_nhc == microorganism.last_nhc:
                 if microorganism.last_fenotype[1] >= saved_record.last_fenotype[1]:
-                    decrement_frequency(saved_record, saved_record.last_fenotype[0])
-                    increment_frequency(saved_record, microorganism.last_fenotype[0])
+                    helper.decrement_frequency(saved_record, saved_record.last_fenotype[0])
+                    helper.increment_frequency(saved_record, microorganism.last_fenotype[0])
                     saved_record.last_fenotype = microorganism.last_fenotype
             else:
-                increment_frequency(saved_record, microorganism.last_fenotype[0])
+                helper.increment_frequency(saved_record, microorganism.last_fenotype[0])
                 saved_record.frequency += 1
                 saved_record.last_nhc = microorganism.last_nhc
                 saved_record.last_fenotype = microorganism.last_fenotype
             saved_record.last_register = microorganism.last_register
         else:
             microorganism.frequency = 1
-            microorganisms[get(row, 'microorganismo')] = microorganism
+            microorganisms[helper.get(row, 'microorganismo')] = microorganism
     return microorganisms
+
+
+class Criteria(Enum):
+    NONE_CRITERIA = 0
+    FIRST_CRITERIA = 1
+    SECOND_CRITERIA = 2
+    THIRD_CRITERIA = 3
+    FOURTH_CRITERIA = 4
+
+    def get_description(self):
+        if self is self.NONE_CRITERIA:
+            return "Se toman los datos en bruto"
+        if self is self.FIRST_CRITERIA:
+            return "Primer microorganismo por paciente independientemente de su sensibilidad o tipo"
+        if self is self.SECOND_CRITERIA:
+            return "Primer microorganismo por paciente con distinto antibiograma independientemente de su sensibilidad o tipo"
+        if self is self.THIRD_CRITERIA:
+            return "Aislado más resistente de entre todos los aislados del mismo microorganismo"
+        if self is self.FOURTH_CRITERIA:
+            return "Tabla de frecuencia de pertenencia a cuatro fenotipos jerarquizados: DTR > CR > ECR > FQR. " \
+                   "Si pasan más de 30 días entre microorganismos se consideran diferentes, si no se aplica la jerarquía."
+
+    def get_criteria_function(self):
+        if self is self.NONE_CRITERIA:
+            return lambda df: df
+        if self is self.FIRST_CRITERIA:
+            return first_criteria
+        if self is self.SECOND_CRITERIA:
+            return second_criteria
+        if self is self.THIRD_CRITERIA:
+            return third_criteria
+        if self is self.FOURTH_CRITERIA:
+            return fourth_criteria

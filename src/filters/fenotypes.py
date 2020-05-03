@@ -1,5 +1,5 @@
 from filters.frequency import matches_criteria
-from utils.helper import *
+from utils import helper
 
 watched_microorganisms = ['enterobacter', 'escherichia coli', 'klebsiella', 'pseudomonas aeruginosa',
                           'acinetobacter baumannii', 'acinetobacter nosocomialis', 'acinetobacter pittii',
@@ -43,32 +43,32 @@ def ecr(df):
 
 
 def is_dtr(row):
-    microorganismo_name = get(row, "microorganismo")
-    if get_key_matches(acinetobacter_baumannii_complex, microorganismo_name):
-        return is_resistant_to_all(row, acinetobacter_baumannii_complex_dtr_antibiotics)
-    if get_key_matches(watched_microorganisms, microorganismo_name):
-        return is_resistant_to_all(row, dtr_antibiotics)
+    microorganismo_name = helper.get(row, "microorganismo")
+    if helper.get_key_matches(acinetobacter_baumannii_complex, microorganismo_name):
+        return helper.is_resistant_to_all(row, acinetobacter_baumannii_complex_dtr_antibiotics)
+    if helper.get_key_matches(watched_microorganisms, microorganismo_name):
+        return helper.is_resistant_to_all(row, dtr_antibiotics)
 
 
 def is_cr(row):
-    microorganismo_name = get(row, "microorganismo")
-    if get_key_matches(acinetobacter_baumannii_complex + ['pseudomonas aeruginosa'], microorganismo_name):
-        return is_resistant_to_all(row, pseudomonas_aeruginosa_cr_antibiotics)
-    if get_key_matches(watched_microorganisms, microorganismo_name):
-        return is_resistant_to_all(row, enterobacter_cr_antibiotics)
+    microorganismo_name = helper.get(row, "microorganismo")
+    if helper.get_key_matches(acinetobacter_baumannii_complex + ['pseudomonas aeruginosa'], microorganismo_name):
+        return helper.is_resistant_to_all(row, pseudomonas_aeruginosa_cr_antibiotics)
+    if helper.get_key_matches(watched_microorganisms, microorganismo_name):
+        return helper.is_resistant_to_all(row, enterobacter_cr_antibiotics)
 
 
 def is_ecr(row):
-    microorganismo_name = get(row, "microorganismo")
-    if get_key_matches(['pseudomonas aeruginosa'], microorganismo_name):
-        return is_resistant_to_all(row, pseudomonas_aeruginosa_ecr_antibiotics)
-    if get_key_matches(watched_microorganisms, microorganismo_name):
-        return is_resistant_to_all(row, enterobacter_ecr_antibiotics)
+    microorganismo_name = helper.get(row, "microorganismo")
+    if helper.get_key_matches(['pseudomonas aeruginosa'], microorganismo_name):
+        return helper.is_resistant_to_all(row, pseudomonas_aeruginosa_ecr_antibiotics)
+    if helper.get_key_matches(watched_microorganisms, microorganismo_name):
+        return helper.is_resistant_to_all(row, enterobacter_ecr_antibiotics)
 
 
 def is_fqr(row):
-    microorganismo_name = get(row, "microorganismo")
-    if get_key_matches(['pseudomonas aeruginosa'], microorganismo_name):
-        return is_resistant_to_all(row, pseudomonas_aeruginosa_fqr_antibiotics)
-    if get_key_matches(watched_microorganisms, microorganismo_name):
-        return is_resistant_to_all(row, enterobacter_fqr_antibiotics)
+    microorganismo_name = helper.get(row, "microorganismo")
+    if helper.get_key_matches(['pseudomonas aeruginosa'], microorganismo_name):
+        return helper.is_resistant_to_all(row, pseudomonas_aeruginosa_fqr_antibiotics)
+    if helper.get_key_matches(watched_microorganisms, microorganismo_name):
+        return helper.is_resistant_to_all(row, enterobacter_fqr_antibiotics)

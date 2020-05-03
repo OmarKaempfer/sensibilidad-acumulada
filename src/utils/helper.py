@@ -1,6 +1,8 @@
 import pandas as pd
 from cucco import Cucco
 from filters import filters
+from filters.criteria import Criteria
+
 
 def normalize_df_headers(df):
     norm_esp = Cucco()
@@ -81,7 +83,7 @@ def to_csv(dictionary):
     df.to_csv('../result/frequency.csv', encoding='utf-8-sig', sep=';', index=False)
 
 
-def to_csv_fourth_criteria(dictionary):
+def to_csv_fourth_criteria(dictionary, path):
     df = pd.DataFrame(columns=["Microorganismo", "Frecuencia", "Frecuencia DTR",  "Frecuencia CR", "Frecuencia ECR", "Frecuencia FQR"])
     for key in dictionary:
         microorganismo_record = dictionary[key]
@@ -90,13 +92,13 @@ def to_csv_fourth_criteria(dictionary):
                         'Frecuencia CR': microorganismo_record.cr_frequency,
                         'Frecuencia ECR': microorganismo_record.ecr_frequency,
                         'Frecuencia FQR': microorganismo_record.fqr_frequency}, ignore_index=True)
-    df.to_csv('../result/frequency.csv', encoding='utf-8-sig', sep=';', index=False)
+    df.to_csv(path, encoding='utf-8-sig', sep=';', index=False)
 
 
-def to_csv_sensitivity_records(df, microorganisms):
+def to_csv_sensitivity_records(microorganisms, path):
     sensitivity_df = pd.DataFrame()
     sensitivity_df = sensitivity_df.append(list(map(to_row, microorganisms.values())), ignore_index=True)
-    sensitivity_df.to_csv('../result/frequency.csv', encoding='utf-8-sig', sep=';', index=False)
+    sensitivity_df.to_csv(path, encoding='utf-8-sig', sep=';', index=False)
     return sensitivity_df
 
 
@@ -195,3 +197,16 @@ def get_service_condition(service):
 
 def get_center_condition(center):
     return str.lower(center)
+
+
+def get_criteria(text):
+    if text == 'Ninguno':
+        return Criteria.NONE_CRITERIA
+    if text == 'Primero':
+        return Criteria.FIRST_CRITERIA
+    if text == 'Segundo':
+        return Criteria.SECOND_CRITERIA
+    if text == 'Tercero':
+        return Criteria.THIRD_CRITERIA
+    if text == 'DTR':
+        return Criteria.FOURTH_CRITERIA
